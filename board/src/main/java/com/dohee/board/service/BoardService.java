@@ -4,10 +4,8 @@ import java.util.List;
 
 import com.dohee.board.dto.Board;
 
-
-
 public interface BoardService {
-
+    
     // 게시글 목록
     public List<Board> list() throws Exception;
 
@@ -24,5 +22,5 @@ public interface BoardService {
     public int delete(int no) throws Exception;
 
     // 조회수 증가
-    public int updateViews(Board board) throws Exception; 
+    public int updateViews(Board board) throws Exception;
 }

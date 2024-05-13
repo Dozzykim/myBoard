@@ -6,10 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.dohee.board.mapper.BoardMapper">
 
-    <!-- 필수!!!! => 매퍼 인터페이스의 메서드 명 = 매퍼 파일의 id 속성값 -->
-    <!-- 해당 메서드가 호출되면, 매퍼 XML 파일의 SQL을 실행 -->
-
-    <!-- 게시글 목록 - [페이징] + [검색] -->
+    <!-- 게시글 목록 -->
     <select id="list" resultType="Board">
         SELECT *
         FROM board
@@ -18,7 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 게시글 조회 -->
     <select id="select" resultType="Board">
-        SELECT *
+         SELECT *
         FROM board
         WHERE no = #{no}
     </select>
@@ -35,7 +32,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
            SET title = #{title}
               ,writer = #{writer}
               ,content = #{content}
-              ,upd_date = now()
         WHERE no = #{no}
     </update>
 
@@ -44,12 +40,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         DELETE FROM board
         WHERE no = #{no}
     </delete>
-
-    <!-- 게시글 번호 최댓값 -->
-    <select id="maxPk" resultType="int">
-        SELECT MAX(no)
-        FROM board
-    </select>
 
     <update id="updateViews">
         UPDATE board
