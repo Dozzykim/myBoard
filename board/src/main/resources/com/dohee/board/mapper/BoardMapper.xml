@@ -11,37 +11,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 게시글 목록 - [페이징] + [검색] -->
     <select id="list" resultType="Board">
-   <!-- SELECT *
+        SELECT *
         FROM board
-        ORDER BY reg_date DESC -->
-        SELECT b.*, file_no
-        FROM board b LEFT JOIN (
-                                SELECT parent_no, no as file_no, file_name, file_code, file_path
-                                FROM file
-                                WHERE parent_table="board" AND file_code = 1
-                                )f
-        ON (b.no = f.parent_no)
-        WHERE 
-            <if test="option.code == 0">
-                    title LIKE CONCAT('%', #{option.keyword}, '%')
-                OR writer LIKE CONCAT('%', #{option.keyword}, '%')
-                OR content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 1">
-                title LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 2">
-                content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 3">
-                    title LIKE CONCAT('%', #{option.keyword}, '%')
-                OR content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 4">
-                writer LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-        ORDER BY b.reg_date DESC
-        LIMIT #{page.index}, #{page.rows}
+        ORDER BY reg_date DESC
     </select>
 
     <!-- 게시글 조회 -->
@@ -79,58 +51,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM board
     </select>
 
-    <!-- 데이터 개수 조회 - [검색] -->
-    <select id="count" resultType="int">
-        SELECT COUNT(*)
-        FROM board
-        WHERE 
-            <if test="option.code == 0">
-                    title LIKE CONCAT('%', #{option.keyword}, '%')
-                OR writer LIKE CONCAT('%', #{option.keyword}, '%')
-                OR content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 1">
-                title LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 2">
-                content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 3">
-                    title LIKE CONCAT('%', #{option.keyword}, '%')
-                OR content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 4">
-                writer LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-    </select>
-
-    <!-- 게시글 목록 [검색] MySQL함수 CONCAT이용-->
-    <select id="search" resultType="Board">
-        SELECT *
-        FROM board
-        WHERE 
-            <if test="option.code == 0">
-                    title LIKE CONCAT('%', #{option.keyword}, '%')
-                OR writer LIKE CONCAT('%', #{option.keyword}, '%')
-                OR content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 1">
-                title LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 2">
-                content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 3">
-                    title LIKE CONCAT('%', #{option.keyword}, '%')
-                OR content LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 4">
-                writer LIKE CONCAT('%', #{option.keyword}, '%')
-            </if>
-        ORDER BY reg_date DESC
-    </select>
-
-    <!-- 조회 수 증가 -->
     <update id="updateViews">
         UPDATE board
         SET views = #{views} + 1

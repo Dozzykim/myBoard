@@ -17,8 +17,6 @@ import com.dohee.board.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
 
 
-
-
 @Slf4j
 @Controller     // 컨트롤러 스프링 빈으로 등록 -> 여러가지 요청경로 매핑을 사용할 수 있도록
 @RequestMapping("/board")   // 클래스 레벨 요청 경로 매핑 -> /board/~ 경로의 요청은 이 컨트롤러가 처리함
