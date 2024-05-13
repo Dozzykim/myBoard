@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.dohee.board.mapper.BoardMapper">
+
+    <!-- 필수!!!! => 매퍼 인터페이스의 메서드 명 = 매퍼 파일의 id 속성값 -->
+    <!-- 해당 메서드가 호출되면, 매퍼 XML 파일의 SQL을 실행 -->
+
+    <!-- 게시글 목록 - [페이징] + [검색] -->
+    <select id="list" resultType="Board">
+   <!-- SELECT *
+        FROM board
+        ORDER BY reg_date DESC -->
+        SELECT b.*, file_no
+        FROM board b LEFT JOIN (
+                                SELECT parent_no, no as file_no, file_name, file_code, file_path
+                                FROM file
+                                WHERE parent_table="board" AND file_code = 1
+                                )f
+        ON (b.no = f.parent_no)
+        WHERE 
+            <if test="option.code == 0">
+                    title LIKE CONCAT('%', #{option.keyword}, '%')
+                OR writer LIKE CONCAT('%', #{option.keyword}, '%')
+                OR content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+                title LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                    title LIKE CONCAT('%', #{option.keyword}, '%')
+                OR content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 4">
+                writer LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+        ORDER BY b.reg_date DESC
+        LIMIT #{page.index}, #{page.rows}
+    </select>
+
+    <!-- 게시글 조회 -->
+    <select id="select" resultType="Board">
+        SELECT *
+        FROM board
+        WHERE no = #{no}
+    </select>
+
+    <!-- 게시글 등록 -->
+    <insert id="insert">
+        INSERT INTO board( title, writer, content)
+        VALUES ( #{title}, #{writer}, #{content} )
+    </insert>
+
+    <!-- 게시글 수정 -->
+    <update id="update">
+        UPDATE board
+           SET title = #{title}
+              ,writer = #{writer}
+              ,content = #{content}
+              ,upd_date = now()
+        WHERE no = #{no}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="delete">
+        DELETE FROM board
+        WHERE no = #{no}
+    </delete>
+
+    <!-- 게시글 번호 최댓값 -->
+    <select id="maxPk" resultType="int">
+        SELECT MAX(no)
+        FROM board
+    </select>
+
+    <!-- 데이터 개수 조회 - [검색] -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*)
+        FROM board
+        WHERE 
+            <if test="option.code == 0">
+                    title LIKE CONCAT('%', #{option.keyword}, '%')
+                OR writer LIKE CONCAT('%', #{option.keyword}, '%')
+                OR content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+                title LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                    title LIKE CONCAT('%', #{option.keyword}, '%')
+                OR content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 4">
+                writer LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+    </select>
+
+    <!-- 게시글 목록 [검색] MySQL함수 CONCAT이용-->
+    <select id="search" resultType="Board">
+        SELECT *
+        FROM board
+        WHERE 
+            <if test="option.code == 0">
+                    title LIKE CONCAT('%', #{option.keyword}, '%')
+                OR writer LIKE CONCAT('%', #{option.keyword}, '%')
+                OR content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+                title LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                    title LIKE CONCAT('%', #{option.keyword}, '%')
+                OR content LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 4">
+                writer LIKE CONCAT('%', #{option.keyword}, '%')
+            </if>
+        ORDER BY reg_date DESC
+    </select>
+
+    <!-- 조회 수 증가 -->
+    <update id="updateViews">
+        UPDATE board
+        SET views = #{views} + 1
+        WHERE no = #{no}
+    </update>
+
+</mapper>
