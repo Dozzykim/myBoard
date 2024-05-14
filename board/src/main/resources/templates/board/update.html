@@ -3,31 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게시글 조회</title>
-    <style>
-        .cmmt-box .inner {
-            min-width: 500px;
-            max-width: 100px;
-            padding: 20px;
-            border: 1px solid black;
-        }
-
-        .cmmt-box .top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cmmt-box.answer {
-            margin-left: 40px;
-        }
-    </style>
+    <title>게시글 수정</title>
 </head>
 <body>
-    <h1>게시글 조회</h1>
+    <h1>게시글 수정</h1>
 
-    <form action="/board/delete" method="post">
+    <form id="form" action="/board/update" method="post">
         <input type="hidden" name="no" th:value="${board.no}">
+
         <table border="2">
             <tr>
                 <td>제목</td>
@@ -47,30 +30,80 @@
                               th:text="${board.content}"></textarea>
                 </td>
             </tr>
+            <tr>
+                <td>파일</td>
+                <td>
+                    <ul>
+                        <!-- 파일 목록 -->
+                        <th:block th:each="file : ${fileList}">
+                            <li>
+                                <!-- 파일명 (다운로드) -->
+                                <a th:href="|/file/${file.no}|" th:text="${file.originName}"></a>
+                                <!-- 파일 삭제 -->
+                                <button type="button" th:onclick="|deleteFile(this, ${file.no})|">삭제</button>
+                            </li>
+                        </th:block>
+                    </ul>
+                </td>
+            </tr>
         </table>
         <div>
-            <button type="button" onclick="moveUpdate()">수정</button>
+            <button type="submit">수정</button>
+            <button type="button" onclick="actionDelete()">삭제</button>
             <button type="button" onclick="moveList()">목록</button>
         </div>
     </form>
 
-
     <script>
+        let form = document.getElementById('form')
 
         // 👩‍💻 모델 객체를 자바스크립트로 가져오는 방법
-        let no = "[[${board.no}]]" // 글번호
-
-
+        let no = "[[${board.no}]]"
+        
         // 수정 화면 이동
         function moveUpdate() {
             location.href = '/board/update?no=' + no
+        }
+ 
+        // 삭제 요청
+        function actionDelete() {
+            let check = confirm('정말로 삭제하시겠습니까?')
+            if( check ) {
+                form.action = '/board/delete'
+                form.submit()
+            }
         }
 
         // 목록 화면 이동
         function moveList() {
             location.href = '/board/list'
         }
-    
+
+        // 첨부 파일 삭제
+        function deleteFile(element, no) {
+            // Ajax 비동기 요청
+            let data = {
+                no : no
+            };
+
+            let request = new XMLHttpRequest();
+
+            request.open('DELETE', '/file/' + no);
+            request.send();
+
+            request.onreadystatechange = function () {
+                //요청 성공 시,
+                if(request.readyState == request.DONE && request.status == 200) {
+                    console.log('파일 삭제 성공!');
+
+                    // 파일 항목 삭제
+                    element.parentNode.remove();
+                }                
+            }
+
+
+        }
+
     </script>
 </body>
 </html>

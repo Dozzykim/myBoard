@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.dohee.board.dto.Board;
+import com.dohee.board.dto.Files;
 import com.dohee.board.service.BoardService;
+import com.dohee.board.service.FileService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +24,9 @@ public class BoardController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private FileService fileService;
     
     /**
      * 게시글 목록
@@ -48,12 +52,20 @@ public class BoardController {
      * @throws Exception 
      */
     @GetMapping("/read")
-    public String select(@RequestParam("no")int no, Model model) throws Exception {
+    public String read(@RequestParam("no")int no, Model model, Files file) throws Exception {
+        log.info("요청 게시글: " + no + "번");
+        // 데이터 요청
+        // - 게시글
         Board board = boardService.select(no);
-        log.info("게시글 조회 요청");
-        log.info(board.toString());
+        // - 첨부파일 목록 ("board"라는 게시판의 게시글번호가 no인 파일들을 가져옴)
+        file.setParentTable("board");
+        file.setParentNo(no);
+        List<Files> fileList = fileService.listByParent(file);
 
         model.addAttribute("board", board);
+        model.addAttribute("fileList", fileList);
+
+        boardService.updateViews(board);
 
         return "/board/read";
     }
@@ -72,7 +84,7 @@ public class BoardController {
      */
     @PostMapping("/insert")
     public String insertPro(Board board) throws Exception {
-        log.info("게시글 등록 요청");
+        log.info("board: " + board);
 
         // 게시글 등록 처리
         log.info(board.toString());
@@ -88,7 +100,18 @@ public class BoardController {
 
     // 게시글 수정 화면
     @GetMapping("/update")
-    public String update(Model model) {
+    public String update(@RequestParam("no")int no, Files file, Model model) throws Exception {
+        // 데이터 요청
+        // - 게시글
+        Board board = boardService.select(no);
+        // - 첨부파일 목록 ("board"라는 게시판의 게시글번호가 no인 파일들을 가져옴)
+        file.setParentTable("board");
+        file.setParentNo(no);
+        List<Files> fileList = fileService.listByParent(file);
+
+        model.addAttribute("board", board);
+        model.addAttribute("fileList", fileList);
+
         return "/board/update";
     }
 
@@ -113,7 +136,7 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public String delete(@RequestParam("no")int no) throws Exception {
         log.info("삭제요청 글번호: " + no + "번");
         int result = boardService.delete(no);

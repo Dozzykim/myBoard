@@ -17,5 +17,4 @@
 		<package name="com.dohee.board.dto"/>
 	</typeAliases>	
 
-
 </configuration>

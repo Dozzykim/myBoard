@@ -4,11 +4,14 @@ import java.util.Date;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.Data;
+
+@Data
 public class Files {
     
     private int no;             // 파일번호
     private String parentTable; // 종속 테이블
-    private int boardNo;        // 종속 게시글 번호
+    private int parentNo;        // 종속 게시글 번호
     private String fileName;    // uid 변형 파일명
     private String originName;  // 기존 파일명
     private String filePath;    // 파일경로

@@ -47,13 +47,25 @@
                               th:text="${board.content}"></textarea>
                 </td>
             </tr>
+            <tr>
+                <td>파일</td>
+                <td>
+                    <ul>
+                        <th:block th:each="file : ${fileList}">
+                            <li>
+                                <img th:src="|/file/img/${file.no}|" alt="썸네일" width="180" />
+                                <a th:href="|/file/${file.no}|" th:text="${file.originName}"></a>
+                            </li>
+                        </th:block>
+                    </ul>
+                </td>
+            </tr>
         </table>
         <div>
             <button type="button" onclick="moveUpdate()">수정</button>
             <button type="button" onclick="moveList()">목록</button>
         </div>
     </form>
-
 
     <script>
 

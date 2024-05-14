@@ -41,10 +41,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE no = #{no}
     </delete>
 
+    <!-- 조회수 증가 -->
     <update id="updateViews">
         UPDATE board
         SET views = #{views} + 1
         WHERE no = #{no}
     </update>
+
+    <select id="maxPk" resultType="int">
+        SELECT max(no)
+        FROM board
+    </select>
 
 </mapper>

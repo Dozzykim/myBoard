@@ -26,4 +26,7 @@ public interface BoardMapper {
 
     // 조회수 증가
     public int updateViews(Board board) throws Exception;
+
+    // 게시글 번호 최댓값 조회 -> 첨부파일 등록 시 필요
+    public int maxPk() throws Exception;
 }

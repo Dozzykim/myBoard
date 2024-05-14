@@ -18,6 +18,6 @@ public class Board {
     private Date updDate;   // 수정일자
     private int views;      // 조회수
 
-    private List<MultipartFile> fileList; // 첨부파일 목록
+    private List<MultipartFile> file; // 첨부파일 목록
 
 }
